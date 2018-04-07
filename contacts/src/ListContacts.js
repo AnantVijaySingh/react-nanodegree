@@ -22,7 +22,7 @@ class ListContacts extends React.Component {
     render() {
 
         const {query} = this.state;
-        const {contacts, onDeleteContact} = this.props;
+        const {contacts, onDeleteContact, onNavigate} = this.props;
 
         const showingContact = query ==='' ?
             contacts
@@ -38,6 +38,11 @@ class ListContacts extends React.Component {
                         value={query}
                         onChange={(event) => {this.updateQuery(event.target.value)}}
                     />
+                    <a
+                        href="#create"
+                        className="add-contact"
+                        onClick={onNavigate}
+                    >Create Contact</a>
                 </div>
                 {
                     showingContact.length !== contacts.length && ( /* && here is an operator that functions like a if statement*/
