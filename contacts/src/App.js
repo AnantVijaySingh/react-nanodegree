@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import ListContacts from './ListContacts';
 import * as ContactsAPI from './utils/ContactsAPI';
 import CreateContact from './CreateContact';
+import { Route } from 'react-router-dom';
 
 class App extends Component {
     state = {
-        contacts: [],
-        screen: 'list'
+        contacts: []
     };
 
     componentDidMount() {
@@ -25,25 +25,21 @@ class App extends Component {
         ContactsAPI.remove(contact)
     };
 
-    createContact = () => {
-        this.setState(() => ({screen: 'create'}))
-    };
-
     // Parenthesize the body of function to return an object literal expression:
     // (params) => ({foo: bar})
 
     render() {
         return (
             <div>
-                { this.state.screen === 'list' && (
+                {/*Adding -- "exact" -- as "/" would partially match every path*/}
+                <Route exact path="/" render={() => (
                     <ListContacts
                         onDeleteContact={this.removeContact}
                         onNavigate={this.createContact}
                         contacts={this.state.contacts} />
-                )}
-                { this.state.screen === 'create' && (
-                    <CreateContact/>
-                )}
+                )} />
+                {/*We can simply use component prop instead of render if we want to pass a component that does not require and prop to be added*/}
+                <Route path="/create" component={CreateContact} />
             </div>
         )
     }
