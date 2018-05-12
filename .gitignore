@@ -2,7 +2,7 @@
 
 # dependencies
 /React/contacts/node_modules
-/React/reactnd-contacts-server/node_modules
+/React/Contacts-server/node_modules
 
 # testing
 /React/contact/coverage
