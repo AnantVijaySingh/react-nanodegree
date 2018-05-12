@@ -1,20 +1,19 @@
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
 # dependencies
-/contacts/node_modules
-/reactnd-contacts-server/node_modules
+/React/contacts/node_modules
+/React/reactnd-contacts-server/node_modules
 
 # testing
-/contact/coverage
+/React/contact/coverage
 
 # production
-/contacts/build
 
 # misc
-/contacts/.DS_Store
-/contacts/.env
-/contacts/npm-debug.log*
-/contacts/yarn-debug.log*
-/contacts/yarn-error.log*
-/contacts/.idea
+/React/contacts/.DS_Store
+/React/contacts/.env
+/React/contacts/npm-debug.log*
+/React/contacts/yarn-debug.log*
+/React/contacts/yarn-error.log*
+/React/contacts/.idea
 .idea
