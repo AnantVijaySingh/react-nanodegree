@@ -77,8 +77,30 @@ function goals (state = [], action) {
     }
 }
 
+// --- Custom Redux middleware ---
 
-function checkAndDispatch(store, action) {
+// function checkAndDispatch(store, action) {
+//     if (
+//         action.type === ADD_TODO &&
+//         action.todo.name.toLocaleLowerCase().includes('bitcoin')
+//     ) {
+//
+//         return alert("Nope, don't do that");
+//     }
+//
+//     if (
+//         action.type === ADD_GOAL &&
+//         action.goal.name.toLocaleLowerCase().includes('bitcoin')
+//     ) {
+//         return alert("Nope, don't do that");
+//     }
+//
+//     return store.dispatch(action)
+// }
+
+// --- Redux Middleware ---
+// Next is either another middleware or the dispatch function
+const checker = (store) => (next) => (action) => {
     if (
         action.type === ADD_TODO &&
         action.todo.name.toLocaleLowerCase().includes('bitcoin')
@@ -94,8 +116,18 @@ function checkAndDispatch(store, action) {
         return alert("Nope, don't do that");
     }
 
-    return store.dispatch(action)
-}
+    return next(action)
+};
+
+const logger = (store) => (next) => (action) => {
+    console.group(action.type);
+        console.log('The action:',action);
+        const result = next(action);
+        console.log('The state:', store.getState());
+    console.groupEnd();
+    return result
+};
+
 
 
 // We can only pass one reducer function to the createStore function, so we will break down the state object into two and use a root reducer to combine the reducers for different parts of the state
@@ -107,14 +139,16 @@ function checkAndDispatch(store, action) {
 //     }
 // }
 
-const store = Redux.createStore(Redux.combineReducers({
+// Redux.middleware(...middleware) can take multiple middleware functions. They are called in the order they are passed
+
+const store = Redux.createStore(
+    Redux.combineReducers({
     todos,
-    goals
-}));
+    goals}),
+    Redux.applyMiddleware(checker,logger)
+    );
 
 store.subscribe(() => {
-    console.log('The new state is: ', store.getState());
-
     const {todos, goals} = store.getState();
 
     document.getElementById('todos').innerHTML = '';
@@ -136,7 +170,7 @@ function addToDo() {
     const name = input.value;
     input.value = '';
 
-    checkAndDispatch(store, addTodoAction({
+    store.dispatch(addTodoAction({
         name: name,
         id: generateId()
     }))
@@ -147,7 +181,7 @@ function addGoal() {
     const name = input.value;
     input.value = '';
 
-    checkAndDispatch(store, addGoalAction({
+    store.dispatch(addGoalAction({
         name: name,
         id: generateId()
     }))
@@ -167,13 +201,13 @@ function addTodoToDom(todo) {
     const node = document.createElement('li');
     const name = document.createTextNode(todo.name);
     const removeBtn = createRemoveButton(() => {
-        checkAndDispatch(store, removeTodoAction(todo.id))
+        store.dispatch(removeTodoAction(todo.id))
     });
     node.appendChild(name);
 
     node.style.textDecoration = todo.complete ? 'line-through' : 'none';
     node.addEventListener('click',() => {
-        checkAndDispatch(store, toggleTodoAction(todo.id))
+        store.dispatch(toggleTodoAction(todo.id))
     });
 
     node.appendChild(removeBtn);
@@ -186,7 +220,7 @@ function addGoalToDom(goal) {
     const node = document.createElement('li');
     const name = document.createTextNode(goal.name);
     const removeBtn = createRemoveButton(() => {
-        checkAndDispatch(store, removeGoalAction(goal.id))
+        store.dispatch(removeGoalAction(goal.id))
     });
     node.appendChild(name);
     node.appendChild(removeBtn);
