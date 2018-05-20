@@ -77,6 +77,27 @@ function goals (state = [], action) {
     }
 }
 
+
+function checkAndDispatch(store, action) {
+    if (
+        action.type === ADD_TODO &&
+        action.todo.name.toLocaleLowerCase().includes('bitcoin')
+    ) {
+
+        return alert("Nope, don't do that");
+    }
+
+    if (
+        action.type === ADD_GOAL &&
+        action.goal.name.toLocaleLowerCase().includes('bitcoin')
+    ) {
+        return alert("Nope, don't do that");
+    }
+
+    return store.dispatch(action)
+}
+
+
 // We can only pass one reducer function to the createStore function, so we will break down the state object into two and use a root reducer to combine the reducers for different parts of the state
 // Now the state is an object with two keys which are arrays
 // function app(state = {}, action) {
@@ -115,7 +136,7 @@ function addToDo() {
     const name = input.value;
     input.value = '';
 
-    store.dispatch(addTodoAction({
+    checkAndDispatch(store, addTodoAction({
         name: name,
         id: generateId()
     }))
@@ -126,7 +147,7 @@ function addGoal() {
     const name = input.value;
     input.value = '';
 
-    store.dispatch(addGoalAction({
+    checkAndDispatch(store, addGoalAction({
         name: name,
         id: generateId()
     }))
@@ -146,13 +167,13 @@ function addTodoToDom(todo) {
     const node = document.createElement('li');
     const name = document.createTextNode(todo.name);
     const removeBtn = createRemoveButton(() => {
-        store.dispatch(removeTodoAction(todo.id))
+        checkAndDispatch(store, removeTodoAction(todo.id))
     });
     node.appendChild(name);
 
     node.style.textDecoration = todo.complete ? 'line-through' : 'none';
     node.addEventListener('click',() => {
-        store.dispatch(toggleTodoAction(todo.id))
+        checkAndDispatch(store, toggleTodoAction(todo.id))
     });
 
     node.appendChild(removeBtn);
@@ -165,7 +186,7 @@ function addGoalToDom(goal) {
     const node = document.createElement('li');
     const name = document.createTextNode(goal.name);
     const removeBtn = createRemoveButton(() => {
-        store.dispatch(removeGoalAction(goal.id))
+        checkAndDispatch(store, removeGoalAction(goal.id))
     });
     node.appendChild(name);
     node.appendChild(removeBtn);
