@@ -174,10 +174,27 @@ function addGoal() {
 document.getElementById('todoBtn').addEventListener('click',addToDo);
 document.getElementById('goalBtn').addEventListener('click',addGoal);
 
+function createRemoveButton(onClick) {
+    const removeBtn = document.createElement('button');
+    removeBtn.innerHTML = 'X';
+    removeBtn.addEventListener('click',onClick);
+    return removeBtn;
+}
+
 function addTodoToDom(todo) {
     const node = document.createElement('li');
     const name = document.createTextNode(todo.name);
+    const removeBtn = createRemoveButton(() => {
+        store.dispatch(removeTodoAction(todo.id))
+    });
     node.appendChild(name);
+
+    node.style.textDecoration = todo.complete ? 'line-through' : 'none';
+    node.addEventListener('click',() => {
+        store.dispatch(toggleTodoAction(todo.id))
+    });
+
+    node.appendChild(removeBtn);
 
     document.getElementById('todos').appendChild(node);
 }
@@ -186,7 +203,11 @@ function addTodoToDom(todo) {
 function addGoalToDom(goal) {
     const node = document.createElement('li');
     const name = document.createTextNode(goal.name);
+    const removeBtn = createRemoveButton(() => {
+        store.dispatch(removeGoalAction(goal.id))
+    });
     node.appendChild(name);
+    node.appendChild(removeBtn);
 
     document.getElementById('goals').appendChild(node);
 }
