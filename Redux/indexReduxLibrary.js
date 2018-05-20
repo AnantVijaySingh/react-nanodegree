@@ -89,6 +89,15 @@ function goals (state = [], action) {
     }
 }
 
+function loading(state = true, action) {
+    switch (action.type) {
+        case RECEIVE_DATA :
+            return state = false;
+        default :
+            return state;
+    }
+}
+
 // --- Custom Redux middleware ---
 
 // function checkAndDispatch(store, action) {
@@ -156,7 +165,8 @@ const logger = (store) => (next) => (action) => {
 const store = Redux.createStore(
     Redux.combineReducers({
     todos,
-    goals}),
+    goals,
+    loading}),
     Redux.applyMiddleware(checker,logger)
     );
 
