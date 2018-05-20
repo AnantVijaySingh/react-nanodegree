@@ -1,7 +1,17 @@
-function List(prop) {
+function List(props) {
     return (
         <ul>
-            <li>LIST</li>
+            {props.items.map((item) => (
+                <li key={item.id}>
+                    <span
+                        onClick={()=> {props.toggle && props.toggle(item.id)}} // && operator acts as a simple if statement which is checking is toggle is defined and if it is than it will assign the call to it
+                        style={{textDecoration: item.complete ? 'line-through' : 'none'}}
+                    >
+                        {item.name}
+                    </span>
+                    <button onClick={() => props.remove(item)}>X</button>
+                </li>
+            ))}
         </ul>
     )
 }
@@ -20,6 +30,14 @@ class ToDos extends React.Component {
         }))
     };
 
+    removeItem = (todo) => {
+        this.props.store.dispatch(removeTodoAction(todo.id))
+    };
+
+    toggleItem = (id) => {
+        this.props.store.dispatch(toggleTodoAction(id))
+    };
+
     render() {
         return (
             <div>
@@ -30,7 +48,11 @@ class ToDos extends React.Component {
                     ref={(input) => this.input = input}
                 />
                 <button onClick={this.addItem}>Add Todo</button>
-                <List/>
+                <List
+                    items={this.props.todos}
+                    remove={this.removeItem}
+                    toggle={this.toggleItem}
+                />
             </div>
         )
     }
@@ -48,6 +70,10 @@ class Goals extends React.Component {
         }))
     };
 
+    removeItem = (goal) => {
+        this.props.store.dispatch(removeGoalAction(goal.id))
+    };
+
     render() {
         return (
             <div>
@@ -59,7 +85,10 @@ class Goals extends React.Component {
                 />
                 <button onClick={this.addItem}>Add Goal</button>
 
-                <List/>
+                <List
+                    items={this.props.goals}
+                    remove={this.removeItem}
+                />
             </div>
         )
     }
