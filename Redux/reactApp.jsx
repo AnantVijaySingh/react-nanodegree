@@ -18,24 +18,46 @@ function List(props) {
 
 class ToDos extends React.Component {
 
+    // Returning the to-do object for the action from the API response
+    // Not using optimistic updates here
     addItem = (e) => {
         e.preventDefault();
-        const name = this.input.value;
-        this.input.value = '';
 
-        this.props.store.dispatch(addTodoAction({
-            name: name,
-            id: generateId(),
-            complete: false
-        }))
+        API.saveTodo(this.input.value)
+            .then((todo) => {
+                this.props.store.dispatch(addTodoAction(todo))
+            })
+            .catch(() => alert('Please try again'));
+
+        // const name = this.input.value;
+        // this.input.value = '';
+        //
+        // this.props.store.dispatch(addTodoAction({
+        //     name: name,
+        //     id: generateId(),
+        //     complete: false
+        // }))
     };
-
+    // Optimistic Updates: Updating the UI first to give feedback and then checking the API response in case of error
     removeItem = (todo) => {
-        this.props.store.dispatch(removeTodoAction(todo.id))
+        this.props.store.dispatch(removeTodoAction(todo.id));
+
+        API.deleteTodo(todo.id)
+            .catch(() => {
+                this.props.store.dispatch(addTodoAction(todo));
+                alert('Action failed. Please try again')
+            })
+
     };
 
     toggleItem = (id) => {
-        this.props.store.dispatch(toggleTodoAction(id))
+        this.props.store.dispatch(toggleTodoAction(id));
+
+        API.saveTodoToggle(id)
+            .catch(() => {
+                this.props.store.dispatch(toggleTodoAction(id));
+                alert('Action failed.')
+            })
     };
 
     render() {
@@ -61,17 +83,30 @@ class ToDos extends React.Component {
 class Goals extends React.Component {
     addItem = (e) => {
         e.preventDefault();
-        const name = this.input.value;
-        this.input.value = '';
 
-        this.props.store.dispatch(addGoalAction({
-            name: name,
-            id: generateId()
-        }))
+        API.saveGoal(this.input.value)
+            .then((goal) => {
+                this.props.store.dispatch(addGoalAction(goal))
+            })
+            .catch(() => alert('Please try again'));
+
+        // const name = this.input.value;
+        // this.input.value = '';
+        //
+        // this.props.store.dispatch(addGoalAction({
+        //     name: name,
+        //     id: generateId()
+        // }))
     };
 
     removeItem = (goal) => {
-        this.props.store.dispatch(removeGoalAction(goal.id))
+        this.props.store.dispatch(removeGoalAction(goal.id));
+
+        API.deleteGoal(goal.id)
+            .catch(() => {
+                this.props.store.dispatch(addGoalAction(goal));
+                alert('Action failed. Please try again.')
+            })
     };
 
     render() {
