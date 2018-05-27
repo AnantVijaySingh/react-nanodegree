@@ -75,7 +75,7 @@ class ToDos extends React.Component {
     }
 }
 
-const ConnectedToDos = connect((state) => ({todos: state.todos}))(ToDos);
+const ConnectedToDos = ReactRedux.connect((state) => ({todos: state.todos}))(ToDos);
 
 // class ConnectedToDos extends React.Component {
 //     render() {
@@ -143,7 +143,7 @@ class Goals extends React.Component {
 }
 
 // See below ConnectedApp for reasoning
-const ConnectedGoals = connect((state) => ({goals: state.goals}))(Goals);
+const ConnectedGoals = ReactRedux.connect((state) => ({goals: state.goals}))(Goals);
 
 
 // class ConnectedGoals extends React.Component {
@@ -207,70 +207,70 @@ class App extends React.Component {
 
 // The connect function is a function that return a function that is again called with the next set of arguments, this second calling takes in the Component that needs to be rendered
 // It basically builds us the Connected type component that we need
-const ConnectedApp = connect((state) => ({loading: state.loading}))(App);
+const ConnectedApp = ReactRedux.connect((state) => ({loading: state.loading}))(App);
 
 
-// mapStateToProps is the function that we pass to 'connect' that takes in the state and returns an object with the props that we want to pass our presentational component
-function connect(mapStateToProps) {
-    // connect should return a function that takes in a component that is then passed the props and which then returns the a ConnectedComponent type component which encompasses the presentational (UI) component
-    // So basically we are creating a function that produces specific components of the type ConnectedComponents and does the work of passing the props and Context for us
-    return (Component) => {
-
-        class Receiver extends React.Component {
-            componentDidMount () {
-                const {subscribe} = this.props.store;
-
-                this.unsubscribe = subscribe(() => {
-                    this.forceUpdate()
-                })
-            }
-
-            componentWillUnmount () {
-                this.unsubscribe()
-            }
-
-            render() {
-                const {dispatch, getState} = this.props.store; // We can do this as the ConnectComponent uses Context to pass store as a prop
-                const state = getState();
-                const stateNeeded = mapStateToProps(state); // This will give us the props that we need to pass
-                return (
-                    <Component {...stateNeeded} dispatch={dispatch}/>
-                )
-            }
-        }
-
-        class ConnectedComponent extends React.Component {
-            render () {
-                return (
-                    <Context.Consumer>
-                        {(store) => <Receiver store={store} />}
-                    </Context.Consumer>
-                )
-            }
-        }
-
-        return ConnectedComponent
-    }
-}
-
-
+// ----- mapStateToProps is the function that we pass to 'connect' that takes in the state and returns an object with the props that we want to pass our presentational component
+// function connect(mapStateToProps) {
+//     ----- connect should return a function that takes in a component that is then passed the props and which then returns the a ConnectedComponent type component which encompasses the presentational (UI) component
+//     ----- So basically we are creating a function that produces specific components of the type ConnectedComponents and does the work of passing the props and Context for us
+//     return (Component) => {
+//
+//         class Receiver extends React.Component {
+//             componentDidMount () {
+//                 const {subscribe} = this.props.store;
+//
+//                 this.unsubscribe = subscribe(() => {
+//                     this.forceUpdate()
+//                 })
+//             }
+//
+//             componentWillUnmount () {
+//                 this.unsubscribe()
+//             }
+//
+//             render() {
+//                 const {dispatch, getState} = this.props.store; // We can do this as the ConnectComponent uses Context to pass store as a prop
+//                 const state = getState();
+//                 const stateNeeded = mapStateToProps(state); // This will give us the props that we need to pass
+//                 return (
+//                     <Component {...stateNeeded} dispatch={dispatch}/>
+//                 )
+//             }
+//         }
+//
+//         class ConnectedComponent extends React.Component {
+//             render () {
+//                 return (
+//                     <Context.Consumer>
+//                         {(store) => <Receiver store={store} />}
+//                     </Context.Consumer>
+//                 )
+//             }
+//         }
+//
+//         return ConnectedComponent
+//     }
+// }
 
 
-const Context = React.createContext();
 
-class Provider extends React.Component {
-    render () {
-        return (
-            <Context.Provider value={this.props.store}>
-                {this.props.children}
-            </Context.Provider>
-        )
-    }
-}
+
+// const Context = React.createContext();
+
+// class Provider extends React.Component {
+//     render () {
+//         return (
+//             <Context.Provider value={this.props.store}>
+//                 {this.props.children}
+//             </Context.Provider>
+//         )
+//     }
+// }
 
 ReactDOM.render(
-    <Provider store={store}>
+    <ReactRedux.Provider store={store}>
         <ConnectedApp />
-    </Provider>,
+    </ReactRedux.Provider>,
     document.getElementById('app')
 );
