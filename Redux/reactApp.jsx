@@ -151,7 +151,42 @@ class App extends React.Component {
         )
     }
 }
+
+
+// A connected component is connected to the Redux store and is responsible for getting data from the store.
+// A presentational component should not access the store. It should receive any information it needs as props and then just render a UI.
+// We break down the components into a connected component and a presentational component to separate out the data and UI aspects.
+// We use Context to get the store etc data to the connected component and pass it down to the presentational component as Props
+
+
+class ConnectedApp extends React.Component {
+    render() {
+        return (
+            <Context.Consumer>
+                {(store) => (
+                    <App store={store}/>
+                )}
+            </Context.Consumer>
+        )
+    }
+}
+
+
+const Context = React.createContext();
+
+class Provider extends React.Component {
+    render () {
+        return (
+            <Context.Provider value={this.props.store}>
+                {this.props.children}
+            </Context.Provider>
+        )
+    }
+}
+
 ReactDOM.render(
-    <App store={store} />,
+    <Provider store={store}>
+        <App />
+    </Provider>,
     document.getElementById('app')
 );
