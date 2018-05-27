@@ -23,11 +23,18 @@ class ToDos extends React.Component {
     addItem = (e) => {
         e.preventDefault();
 
-        API.saveTodo(this.input.value)
-            .then((todo) => {
-                this.props.store.dispatch(addTodoAction(todo))
-            })
-            .catch(() => alert('Please try again'));
+        this.props.store.dispatch(handleAddTodo(
+            this.input.value,
+            () => this.input.value = '' // Passing a function that will contain the reference to be able to reset the input field
+        ));
+
+        // --  Moved code to handleAddTodo action creator that using thunk to handle data and API calls
+        // API.saveTodo(this.input.value)
+        //     .then((todo) => {
+        //         this.props.store.dispatch(addTodoAction(todo))
+        //         this.input.value = ''
+        //     })
+        //     .catch(() => alert('Please try again'));
 
         // const name = this.input.value;
         // this.input.value = '';
@@ -45,13 +52,7 @@ class ToDos extends React.Component {
     };
 
     toggleItem = (id) => {
-        this.props.store.dispatch(toggleTodoAction(id));
-
-        API.saveTodoToggle(id)
-            .catch(() => {
-                this.props.store.dispatch(toggleTodoAction(id));
-                alert('Action failed.')
-            })
+        this.props.store.dispatch(handleToggleTodo(id));
     };
 
     render() {
@@ -78,13 +79,20 @@ class Goals extends React.Component {
     addItem = (e) => {
         e.preventDefault();
 
-        API.saveGoal(this.input.value)
-            .then((goal) => {
-                this.props.store.dispatch(addGoalAction(goal))
-            })
-            .catch(() => alert('Please try again'));
+        this.props.store.dispatch(handleAddGoal(
+           this.input.value,
+            () => this.input.value = ''
+        ));
 
-        // const name = this.input.value;
+        // --- Moved to action creator handleAddGoal
+        // API.saveGoal(this.input.value)
+        //     .then((goal) => {
+        //         this.props.store.dispatch(addGoalAction(goal))
+        //         this.input.value = ''
+        //     })
+        //     .catch(() => alert('Please try again'));
+        //
+        // // const name = this.input.value;
         // this.input.value = '';
         //
         // this.props.store.dispatch(addGoalAction({
@@ -94,13 +102,7 @@ class Goals extends React.Component {
     };
 
     removeItem = (goal) => {
-        this.props.store.dispatch(removeGoalAction(goal.id));
-
-        API.deleteGoal(goal.id)
-            .catch(() => {
-                this.props.store.dispatch(addGoalAction(goal));
-                alert('Action failed. Please try again.')
-            })
+        this.props.store.dispatch(handleRemoveGoal(goal));
     };
 
     render() {
@@ -127,14 +129,7 @@ class Goals extends React.Component {
 class App extends React.Component {
     componentDidMount() {
         const {store} = this.props;
-
-        Promise.all([
-            API.fetchTodos(),
-            API.fetchGoals(),
-        ]).then(([todos,goals]) => {
-            store.dispatch(receiveDataAction(todos,goals))
-        });
-
+        store.dispatch(handleInitialData());
 
         store.subscribe(() => this.forceUpdate())
     }

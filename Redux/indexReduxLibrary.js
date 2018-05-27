@@ -72,6 +72,64 @@ function receiveDataAction (todos, goals) {
     }
  }
 
+ function handleAddTodo(todoName, callBackFunc) {
+    return (dispatch) => {
+        API.saveTodo(todoName)
+            .then((todo) => {
+                dispatch(addTodoAction(todo));
+                callBackFunc()
+            })
+            .catch(() => alert('Please try again'));
+    }
+ }
+
+ function handleToggleTodo(id) {
+    return (dispatch) => {
+        dispatch(toggleTodoAction(id));
+
+        API.saveTodoToggle(id)
+            .catch(() => {
+                dispatch(toggleTodoAction(id));
+                alert('Action failed.')
+            })
+    }
+ }
+
+ function handleAddGoal(goalName, callBackFunc) {
+     return (dispatch) => {
+         API.saveGoal(goalName)
+             .then((goal) => {
+                 dispatch(addGoalAction(goal));
+                 callBackFunc()
+             })
+             .catch(() => alert('Please try again'));
+     }
+ }
+
+ function handleRemoveGoal(goal) {
+     return (dispatch) => {
+         dispatch(removeGoalAction(goal.id));
+
+         API.deleteGoal(goal.id)
+             .catch(() => {
+                 dispatch(addGoalAction(goal));
+                 alert('Action failed. Please try again.')
+             })
+     }
+ }
+
+ function handleInitialData() {
+     return (dispatch) => {
+         Promise.all([
+             API.fetchTodos(),
+             API.fetchGoals(),
+         ]).then(([todos,goals]) => {
+             dispatch(receiveDataAction(todos,goals))
+         });
+     }
+ }
+
+// Actions
 function todos(state = [],action) {
     switch (action.type) {
         case ADD_TODO :
