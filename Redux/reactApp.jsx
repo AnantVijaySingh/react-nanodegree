@@ -39,15 +39,9 @@ class ToDos extends React.Component {
         // }))
     };
     // Optimistic Updates: Updating the UI first to give feedback and then checking the API response in case of error
+    // Separating data handling and UI by moving API calls to middleware (Thunk)
     removeItem = (todo) => {
-        this.props.store.dispatch(removeTodoAction(todo.id));
-
-        API.deleteTodo(todo.id)
-            .catch(() => {
-                this.props.store.dispatch(addTodoAction(todo));
-                alert('Action failed. Please try again')
-            })
-
+        this.props.store.dispatch(handleRemoveTodo(todo));
     };
 
     toggleItem = (id) => {

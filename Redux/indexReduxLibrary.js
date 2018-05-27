@@ -58,6 +58,20 @@ function receiveDataAction (todos, goals) {
     
 }
 
+// Taking out data handling from UI components
+// We can use this action creator with our middleware
+ function handleRemoveTodo(todo) {
+    return (dispatch) => {
+        dispatch(removeTodoAction(todo.id));
+
+        API.deleteTodo(todo.id)
+            .catch(() => {
+                dispatch(addTodoAction(todo));
+                alert('Action failed. Please try again')
+            })
+    }
+ }
+
 function todos(state = [],action) {
     switch (action.type) {
         case ADD_TODO :
@@ -149,6 +163,15 @@ const logger = (store) => (next) => (action) => {
     return result
 };
 
+const thunk = (store) => (next) => (action) => {
+    if (typeof action === 'function') {
+        return action(store.dispatch)
+    }
+
+    return next(action)
+};
+
+
 
 
 // We can only pass one reducer function to the createStore function, so we will break down the state object into two and use a root reducer to combine the reducers for different parts of the state
@@ -167,7 +190,7 @@ const store = Redux.createStore(
     todos,
     goals,
     loading}),
-    Redux.applyMiddleware(checker,logger)
+    Redux.applyMiddleware(thunk, checker, logger)
     );
 
 store.subscribe(() => {
