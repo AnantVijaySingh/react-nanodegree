@@ -3,9 +3,11 @@
 # dependencies
 /React/contacts/node_modules
 /React/Contacts-server/node_modules
+/todos/node_modules
 
 # testing
 /React/contact/coverage
+/todos/coverage
 
 # production
 

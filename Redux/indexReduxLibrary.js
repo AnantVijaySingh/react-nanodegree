@@ -129,7 +129,7 @@ function receiveDataAction (todos, goals) {
      }
  }
 
-// Actions
+// Reducers
 function todos(state = [],action) {
     switch (action.type) {
         case ADD_TODO :
